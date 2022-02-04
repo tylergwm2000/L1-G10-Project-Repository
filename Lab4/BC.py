@@ -1,3 +1,6 @@
 #BC.py file that prints BC
+
+from B import *
+
 def function_BC():
-	print("BC")
+	function_B()
