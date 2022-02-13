@@ -18,7 +18,6 @@ ___
   - Held online meeting with Leenesh on Thursday for using feedback and completing final proposal document for 1 hour.
   - Started working on Lab5 on Thursday for about 1 hour.
   - Completed Lab 5 on Friday after 2 hours and worked on additional optional tasks.
-  - Helped Leenesh with Lab5.
   - I helped Celeste catch up on previous labs. 
 4. ***How do you feel about your progress?*** _(brief, free-form reflection)_
   - I had fun streaming the video feed through vlc.
