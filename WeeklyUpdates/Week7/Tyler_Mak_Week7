@@ -16,9 +16,9 @@ ___
    - Begin writing code for Web GUI: 4 hours
    - Begin writing and work on Draft Design Document: 4 hours
 3. ***What did you accomplish this week?*** _(Be specific)_  
-  - I found the following GitHub repos for coding with HX711 board: https://github.com/tatobari/hx711py, https://github.com/mpibpc-mroose/hx711, https://github.com/gandalf15/HX711.
+  - I found the following GitHub repos for coding with HX711 board: [1](https://github.com/tatobari/hx711py), [2](https://github.com/mpibpc-mroose/hx711), [3](https://github.com/gandalf15/HX711).
   - I wrote all the basic code needed for Bed Detection subsystem and used Lab5 basic computer vision temporarily 
-  - I repeatedly used https://dash.plotly.com/ to find necessary components needed to create Web GUI
+  - I repeatedly used (https://dash.plotly.com/) to find necessary components needed to create Web GUI
   - I wrote all code for Web GUI and have a website with a graph and some other features
   - In the design document I finished sections 2.1 & 2.2, added all tables in 2.2.1, created all message sequence diagrams in section 2.3, created all figures in section 2.4, and created all fritzing diagrams in section 4.
 4. ***How do you feel about your progress?*** _(brief, free-form reflection)_  
