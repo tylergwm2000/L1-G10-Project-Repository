@@ -2,7 +2,7 @@
 import pyrebase
 import dash
 from dash import dcc, html, callback_context
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 from datetime import datetime, date, timedelta
 import pandas as pd
 import plotly.express as px
@@ -22,11 +22,10 @@ app = dash.Dash(__name__)
 #Get alarms from Firebase
 def get_alarms():
 	allData = db.child("Set Alarms").get()
-	print(allData.val())
 	allData_list = allData.each()
 	options = []
 	for data in allData_list:
-		alarmtime = datetime.strptime(data.val()["Time"], "%H:%M").time()
+		alarmtime = datetime.strptime(data.val()["Time"], "%H:%M")
 		options.append(alarmtime)
 	return options
 
@@ -56,12 +55,23 @@ def make_graph():
 	fig = px.bar(df, x="Date", y="Hours Slept")
 	return fig
 
+#Set button clicked
+def setButtonClicked(time):
+	#time = datetime.strptime(time, "%H:%M")
+	data = {"alarmTime": time, "setAlarm": True, "deleteAlarm": False}
+	db.child("Subsystem Status").child("Web GUI").update(data)
+
+#Remove button clicked
+def removeButtonClicked(time):
+	data = {"alarmTime": time, "setAlarm": False, "deleteAlarm": True}
+	db.child("Subsystem Status").child("Web GUI").update(data)
+
 #Define HTML layout
 interval = dcc.Interval(id = "interval", interval = 5000) #update every 5 secs
 header = html.H1("SprayClock")
 dropdown = html.Div(["Alarms", dcc.Dropdown(
 	id = "dropdown_alarms",
-	options = ["08:00"], #grab alarms from database
+	options = get_alarms(), #grab alarms from database
 	value = "",
 	searchable = False,
 	clearable = False,
@@ -72,23 +82,31 @@ input = html.Div(["Input time in %H:%M format", dcc.Input(
 	maxLength = 5,
 	placeholder = "08:00",
 	debounce = True)])
-addBtn = html.Button("Add Alarm", id = "addButton", title = "Adds alarm input in textbox", n_clicks = 0)
+addBtn = html.Button("Set Alarm", id = "setButton", title = "Adds alarm input in textbox", n_clicks = 0)
 removeBtn = html.Button("Remove Alarm", id = "removeButton", title = "Removes current alarm selected in dropdown", n_clicks = 0)
 subheader = html.H3("Sleep Data")
 graph = dcc.Graph(
 	id = "sleep_data",
 	figure = make_graph())
-body = [interval, header, dropdown, input, addBtn, removeBtn, subheader, graph]
+dropdown1 = dcc.Dropdown(
+	id = "dropdown_graph",
+	options = ["Week", "Month"],
+	value = "Month",
+	searchable = False,
+	clearable = False)
+body = [interval, header, dropdown, input, addBtn, removeBtn, subheader, graph, dropdown1]
 app.layout = html.Div(children = body)
 
 #Update dropdown & firebase on button click
-@app.callback(Output("dropdown_alarms", "options"), Input("addButton", "n_clicks"), Input("removeButton", "n_clicks"), Input("alarm_input", "value"))
-def update_dropdown(addBtn, removeBtn, input):
+@app.callback(Output("dropdown_alarms", "options"), Input("setButton", "n_clicks"), Input("removeButton", "n_clicks"), State("alarm_input", "value"))
+def update_dropdown(addBtn, removeBtn, value):
 	btn_click = [p['prop_id'] for p in callback_context.triggered][0]
-	if "addButton" in btn_click:
+	if "setButton" in btn_click:
 		print("Hello")
+		setButtonClicked(value)
 	elif "removeButton" in btn_click:
 		print("Goodbye")
+		removeButtonClicked(value)
 
 #Start website/dash application
 if __name__ == "__main__":
