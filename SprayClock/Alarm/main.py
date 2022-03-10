@@ -1,6 +1,6 @@
 import pyrebase
 from time import sleep
-import datetime
+from datetime import datetime
 import time
 import RPi.GPIO as GPIO
 
@@ -16,6 +16,7 @@ def init_firebase():
 
 
 def get_alarms():
+	db = init_firebase()
 	allData = db.child("Set Alarms").get()
 	allData_list = allData.each()
 	options = []
@@ -26,22 +27,23 @@ def get_alarms():
 
 def showTime():
 	while True:
-	    time.sleep(2)
-	    time_now = datetime.datetime.now() #time_now is the current time
- 	    curr_time = time_now.strftime("%H:%M") #curr_time is what will be used to print current time
-	    curr_date = time.now.strftime("%d/%m/%Y") #curr_date is what will be used to print current date
-	    print("Current date is:",curr_date)
-	    print(curr_time)
-	    break
+		time.sleep(2)
+		time_now = datetime.now() #time_now is the current ti
+		curr_time = time_now.strftime("%H:%M") #curr_time is what will be used to print current time
+		curr_date = time.now.strftime("%d/%m/%Y") #curr_date is what will be used to print current date
+		print("Current date is:",curr_date)
+		print(curr_time)
+		break
 
 def ringAlarm():
 	new_alarm = get_alarms()
+	time_now = datetime.now()
 	for alarm in new_alarm:
 		if new_alarm == time_now.strftime("%H:%M"):
 			print("alarmClockRinging")
 			return True
 		else:
-	   	     	print("alarmClockIdle")
+			print("alarmClockIdle")
 			return False
 
 #def deleteAlarm():
@@ -53,5 +55,6 @@ def main():
 	subsystem = "Alarm Clock"
 	data = {"Buzzer": ringAlarm(), "Button": False}
 	db.child(parent).child(subsystem).update(data)
+
 if __name__ == "__main__":
 	main()
