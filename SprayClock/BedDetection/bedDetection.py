@@ -64,6 +64,8 @@ def main():
 		db = init_firebase()
 		camera = init_camera()
 		#hx = init_loadSensor()
+		if os.path.isdir("images"):
+			shutil.rmtree("images")
 		os.mkdir("images")
 		parent = "Subsystem Status"
 		subsystem = "Bed Detection"
@@ -71,8 +73,8 @@ def main():
 		#bedWeight = hx._read()
 		while (True):
 			data = {"Camera": cameraDetection(camera, "images/background.jpg"), "Load Sensor": loadDetection()}
-			db.child(parent).child(subsystem).set(data)
-			sleep(1)
+			db.child(parent).child(subsystem).update(data)
+			sleep(60)
 	except (KeyboardInterrupt, SystemExit):
 		print("Exiting bedDetection.py")
 		GPIO.cleanup()
