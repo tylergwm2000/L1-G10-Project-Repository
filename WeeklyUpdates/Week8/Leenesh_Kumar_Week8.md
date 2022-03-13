@@ -29,4 +29,4 @@ ___
   - Reading information from firebase once an alarm has rang.
   - Have Tyler check Web GUI for the time and alarms set
 6. ***Is anything blocking you that you need from others?*** _(What do you need from whom)_  
-  - Nothing at the moment. I'm glad that Celeste is more free now to help the team after everything she went through.
+  - Nothing at the moment. I'm glad that Celeste is more free now to help the team after everything she went through. Goal is to meet next Tuesday in-person.
