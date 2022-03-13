@@ -4,7 +4,7 @@
 ### Week: 8(Mar 7, 2022 - Mar 13, 2022)
 ___
 1. **How many hours did you spend on the project this week? (0-10)**  
-   18 Hours
+   - 18 Hours
 2. **Give rough breakdown of hours spent on 1-3 of the following:**
    (meetings, information gathering, design, research, brainstorming, evaluating options, prototyping options, writing/documenting, refactoring, testing, software implementation, hardware implementation)  
    - Held a meeting with my teammates where we finalized the draft for the Detailed Design Document: 10 hours (Mar 8, Meeting from 2:30 PM - 12:00 AM)
