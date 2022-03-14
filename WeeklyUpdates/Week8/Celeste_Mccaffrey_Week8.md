@@ -21,5 +21,6 @@ ___
    - Honestly, I am really glad I opened up about my struggles a bit with my groupmates. I felt fully supported as Leenesh comforted me on my current situation and Tyler checked in on me when I was worried about the Final Demo Test. I know moving forward, I can open up more and continue to try my best with their support!
 5. ***What are you planning to do next week***? _(give specific goals)_
    - I aim to really catch up in the course and I am more confident that I can do so as I have notified the right people of my situation and can feel I have the full support of my team! Specifically, I want to upload all the content I have for the labs and notify Victoria (my TA) once I have done so as I had gotten behind on those labs and writing my commit changes on them!
+   - I also want to make significant progress 
 6. ***Is anything blocking you that you need from others?*** _(What do you need from whom)_  
    - Nothing at all!
