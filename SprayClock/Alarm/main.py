@@ -41,13 +41,28 @@ def ringAlarm():
 	for alarm in new_alarm:
 		if new_alarm == time_now.strftime("%H:%M"):
 			print("alarmClockRinging")
+			deleteAlarm(new_alarm)
 			return True
 		else:
 			print("alarmClockIdle")
 			return False
 
-#def deleteAlarm():
-#	if ringAlarm(new_alarm)==True
+def deleteAlarm(alar): #alar is a the alarm which had just rang
+	key = 0
+	alarms = get_alarms() #alarms is a list of alarms
+	for alarm in alarms: #checking every alarm object in alarms
+		if alarm != alar: #check when the alarm object is alar
+			key += 1
+	db.child("Set Alarms").child(key).remove() 
+
+def buttonPressed(channel):
+	print("Button was pushed!")
+GPIO.setwarnings(False) # Ignore warning for now
+GPIO.setmode(GPIO.BOARD) # Use physical pin numbering
+GPIO.setup(8, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # Set pin 10 to be an input pin and set initial value to be pulled low (off)
+GPIO.add_event_detect(14,GPIO.RISING,callback=button_callback) # Setup event on pin 10 rising edge
+message = input("Press enter to quit\n\n") # Run until someone presses enter
+GPIO.cleanup() # Clean up
 
 def main():
 	db = init_firebase()
