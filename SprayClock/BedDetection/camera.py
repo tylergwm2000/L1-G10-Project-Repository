@@ -13,6 +13,7 @@ from picamera import PiCamera
 from tflite_runtime.interpreter import Interpreter
 
 class Camera:
+	#Initialize camera and return as object
 	def init_camera():
 		camera = PiCamera()
 		camera.resolution = (1920, 1080)
@@ -22,13 +23,15 @@ class Camera:
 		#camera.exposure_mode = 'nightpreview'
 		return camera
 
+	#Take a picture and store it in imagefile location
 	def take_image(camera, imagefile):
 		camera.capture(imagefile)
 
+	#Using tensorflow object detection API, detect if person is in image with over confidence of 50%
 	def camera_detection(image, model, label):
 		personDetected = False #Initial boolean variable
 		min_confidence_threshold = 0.5 #Minimum confidence to pass
-		graph_name = 'detect.tflite' #Name of tflite file
+		graph_name = 'detect.tflite' #Name of tflite model file
 		labelmap_name = 'labelmap.txt' #Name of labelmap file
 		current_dir = os.getcwd() #Current directory
 
@@ -37,7 +40,7 @@ class Camera:
 		path_to_model = os.path.join(current_dir, model)
 		path_to_label = os.path.join(current_dir, label)
 
-		#Load label map into list and remove weird first label of ???
+		#Load label map into list and remove weird first label of ??? that causes error
 		with open(path_to_label, 'r') as f:
 			labels = [line.strip() for line in f.readlines()]
 		del(labels[0])
@@ -77,6 +80,7 @@ class Camera:
 		interpreter.invoke()
 		classes = interpreter.get_tensor(output_details[classes_idx]['index'])[0] #Class index of detected objects
 		scores = interpreter.get_tensor(output_details[scores_idx]['index'])[0] #Confidence of detected objects
+
 		#Loop through all detected objects
 		for i in range(len(scores)):
 			object = labels[int(classes[i])] # Get object name from labels list using class index

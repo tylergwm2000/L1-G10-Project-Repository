@@ -1,14 +1,14 @@
 #hx711.py implements code to function with HX711 breakout board that will be connected to the load sensor.
 #Code will interact with HX711 board and load sensor for getting weight measurements.
 #This code will be based off the following code found on the GitHub link:
-#
+#https://github.com/tatobari/hx711py
 
 import RPi.GPIO as GPIO
 from time import sleep
 
 
 class HX711:
-	#Initiate load sensor with BCM pins and gain
+	#Initiate load sensor with BCM pins and gain(default 128)
 	def __init__(self, dout, pd_sck, gain=128):
 		self.GAIN = 0
 		self.OFFSET = 0
@@ -58,7 +58,8 @@ class HX711:
 	def get_offset(self):
 		return self.OFFSET
 
-	#Read data from HX711 chip
+	#Read data from HX711 chip based off of code in documentation in C programming language at following link:
+	#https://cdn.sparkfun.com/datasheets/Sensors/ForceFlex/hx711_english.pdf on page 8
 	def read(self):
 		#Check if chip is ready
 		while (GPIO.input(self.DOUT) != 0):
