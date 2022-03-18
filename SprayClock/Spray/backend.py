@@ -20,15 +20,19 @@ def get_alarms():
 	allAlarms_list = allAlarms.each()
 	options = []
 	for alarm in allAlarms_list:
-		alarmTime = datetime.strptime(alarm.val()["Time"], "%H:%M").time()
+		alarmTime = alarm.val()["Time"] #datetime.strptime(alarm.val()["Time"], "%H:%M").time()
 		dayOfAlarm = alarm.val()["Day"]
-		options.append(dayOfAlarm + " " + str(alarmTime))
+		options.append(dayOfAlarm + " " + alarmTime)
 	return options
 
 #Make sleep data graph using plotly.express
-def make_graph():
+def make_graph(timelength='Past Month'):
 	allSleepData = db.child("Sleep Data").get()
 	allData_list = allSleepData.each()
+	if timelength == 'Past Month':
+		allData_list = allData_list[-30:]
+	elif timelength == 'Past Week':
+		allData_list = allData_list[-7:]
 	x = []
 	y = []
 	for data in allData_list:
@@ -57,8 +61,7 @@ def setButtonClicked(day, time):
 	key = 0
 	for alarm in alarms:
 		key += 1
-	time = datetime.strptime(time, "%H:%M").time()
-	data = {"Day": day, "Time": str(time)}
+	data = {"Day": day, "Time": time}
 	db.child("Set Alarms").child(key).set(data)
 	data = {"alarmTime": time, "setAlarm": True, "deleteAlarm": False}
 	db.child("Subsystem Status").child("Web GUI").update(data)
@@ -76,8 +79,12 @@ def removeButtonClicked(dayTime):
 		else:
 			key += 1
 	if alarmExists:
-		db.child("Set Alarms").child(key).remove()
-		
-	time = datetime.strptime(dayTime)
+		#db.child("Set Alarms").child(key).remove()
+		for i in range((key+1), len(alarms)): 
+			alarm = db.child("Set Alarms").child(i).get()
+			db.child("Set Alarms").child((i-1)).set(alarm.val())
+		db.child("Set Alarms").child((len(alarms)-1)).remove()
+	stringList = dayTime.split()
+	time = stringList[1]
 	data = {"alarmTime": time, "setAlarm": False, "deleteAlarm": True}
 	db.child("Subsystem Status").child("Web GUI").update(data)

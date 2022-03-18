@@ -14,7 +14,7 @@ header = html.H1("SprayClock")
 dropdown = html.Div(["Alarms", dcc.Dropdown(
 	id = "dropdown_alarms",
 	options = backend.get_alarms(), #grab alarms from backend.py
-	value = "",
+
 	searchable = False,
 	clearable = False,
 	style = {'width': '30%'},
@@ -22,7 +22,7 @@ dropdown = html.Div(["Alarms", dcc.Dropdown(
 dropdown1 = dcc.Dropdown(
 	id = "dropdown_days",
 	options = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-	value = "",
+
 	searchable = False,
 	style = {'width': '40%'},
 	placeholder = "Select a day of the week")
@@ -34,25 +34,27 @@ input = dcc.Input(
 	debounce = True)
 addBtn = html.Button("Set Alarm", id = "setButton", title = "Adds alarm", n_clicks = 0)
 removeBtn = html.Button("Remove Alarm", id = "removeButton", title = "Removes current alarm selected in dropdown", n_clicks = 0)
+userinteractions = html.Div(id = "userinteractions", children="Waiting for user input")
 subheader = html.H3("Sleep Data")
 graph = dcc.Graph(
 	id = "sleep_data",
 	figure = backend.make_graph())
 dropdown2 = dcc.Dropdown(
 	id = "dropdown_graph",
-	options = ["Week", "Month"],
-	value = "Month",
+	options = ["Past Week", "Past Month"],
+	value = "Past Month",
 	style = {'width': '25%'},
 	searchable = False,
 	clearable = False)
 
 #Define HTML layout
-body = [interval, header, html.Hr(), dropdown, input, dropdown1, addBtn, removeBtn, html.Hr(), subheader, graph, dropdown2]
+body = [header, html.Hr(), dropdown, input, dropdown1, addBtn, removeBtn, userinteractions, html.Hr(), subheader, graph, dropdown2]
 app.layout = html.Div(children = body)
 
 #Update alarms in dropdown and firebase depending on button click
 @app.callback(
 	Output("dropdown_alarms", "options"),
+	Output("userinteractions", "children"),
 	Input("setButton", "n_clicks"),
 	Input("removeButton", "n_clicks"),
 	Input("dropdown_alarms", "value"),
@@ -61,12 +63,31 @@ app.layout = html.Div(children = body)
 def update_alarms(addBtn, removeBtn, selected_alarm, day_input, time_input):
 	btn_click = [p['prop_id'] for p in callback_context.triggered][0] #Get most recent button click
 	if "setButton" in btn_click:
-		print("Hello")
-		backend.setButtonClicked(day_input, time_input)
+		if (day_input == None) and (time_input == None):
+			text = 'Invalid time input and no day has been selected from dropdown!'
+		elif (day_input != None) and (time_input == None or len(time_input) != 5):
+			text = 'Time input needs to be in 24:00 format! Ex. 08:30'
+		elif (day_input == None) and (time_input != None and len(time_input) == 5):
+			text = 'No day has been selected in dropdown!'
+		elif (day_input != None) and (time_input != None and len(time_input) == 5):
+			backend.setButtonClicked(day_input, time_input)
+			text = 'Alarm has been set!'
 	elif "removeButton" in btn_click:
-		print("Goodbye")
-		backend.removeButtonClicked(selected_alarm)
-	return [{'label': alarm, 'value': alarm} for alarm in backend.get_alarms()]
+		if (selected_alarm != None):
+			backend.removeButtonClicked(selected_alarm)
+			text = 'Alarm has been removed!'
+		else:
+			text = 'No alarm has been selected in dropdown!'
+	else:
+		text = 'Waiting for user input'
+	return [{'label': alarm, 'value': alarm} for alarm in backend.get_alarms()], text
+
+#Update graph depending on value selected in dropdown
+@app.callback(
+	Output("sleep_data", "figure"),
+	Input("dropdown_graph", "value"))
+def update_graph(time_length):
+	return backend.make_graph(time_length)
 
 #Start website/dash application
 if __name__ == "__main__":
