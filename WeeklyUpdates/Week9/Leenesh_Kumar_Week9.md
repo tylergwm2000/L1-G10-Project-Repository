@@ -1,6 +1,6 @@
 ## Weekly Individual Project Update Report
 ### Group number: L1-G10
-### Student name: Tyler Mak (101108389)
+### Student name: Leenesh Kumar (101115874)
 ### Week: 9(Mar 14, 2022 - Mar 20, 2022)
 ___
 1. **How many hours did you spend on the project this week? (0-10)**
