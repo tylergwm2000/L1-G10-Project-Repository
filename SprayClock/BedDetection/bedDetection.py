@@ -55,6 +55,7 @@ def main():
 		subsystem = "Bed Detection"
 		key = 0 #Key for naming pictures
 		bedWeight = hx.get_grams() #Get weight of the bed
+		sleepTimeSet = False
 		while (True): #Infinite loop
 			now = datetime.now()
 			current_time = now.strftime("%H:%M")
@@ -70,13 +71,15 @@ def main():
 			data = {"Camera": cameraDetects, "Load Sensor": loadSensorDetects}
 			#Update results to firebase
 			db.child(parent).child(subsystem).update(data)
-			if (cameraDetects or loadSensorDetects): #If person has been detected upload current time for time person slept
+			if (cameraDetects or loadSensorDetects): #If person has been detected for first time upload current time for time person slept
 				data = {"SleepTime": current_time}
-				if (now.hour < 24):
+				if (now.hour >= 0 and now.hour <= 23): #Slept between 12:00 PM and 12:00 AM
 					current_day = now.strftime("%m-%d-%Y")
-				else:
+				else: #Slept between 12:00 AM and 12:00 PM
 					current_day = (now - timedelta(days=1)).strftime("%m-%d-%Y")
-				db.child("Sleep Data").child(current_day).update(data)
+				if (not sleepTimeSet):
+					db.child("Sleep Data").child(current_day).update(data)
+					sleepTimeSet = True
 			if (now.hour == 23 and now.minute == 59): #If day is about to change, update key value for image naming 
 				key = 0
 			else:
