@@ -17,14 +17,14 @@ dropdown = html.Div(["Alarms", dcc.Dropdown(
 
 	searchable = False,
 	clearable = False,
-	style = {'width': '30%'},
+	style = {'width': '45%'},
 	placeholder = "Current Alarms")])
 dropdown1 = dcc.Dropdown(
 	id = "dropdown_days",
 	options = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
 
 	searchable = False,
-	style = {'width': '40%'},
+	style = {'width': '50%'},
 	placeholder = "Select a day of the week")
 input = dcc.Input(
 	id = "alarm_input",
@@ -43,7 +43,7 @@ dropdown2 = dcc.Dropdown(
 	id = "dropdown_graph",
 	options = ["Past Week", "Past Month"],
 	value = "Past Month",
-	style = {'width': '25%'},
+	style = {'width': '40%'},
 	searchable = False,
 	clearable = False)
 
