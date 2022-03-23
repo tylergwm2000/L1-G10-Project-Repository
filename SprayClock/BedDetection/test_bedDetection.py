@@ -2,6 +2,7 @@ import bedDetection
 import os
 import shutil
 import pytest
+from time import sleep
 from camera import Camera
 from hx711 import HX711
 
@@ -26,10 +27,5 @@ def test_bedDetection_loadSensor():
 
 #Test if detecting from camera works
 def test_bedDetection_camera():
-	if (os.path.isdir("images")):
-		shutil.rmtree("images")
-	os.mkdir("images")
-	Camera.take_image(camera, "images/sample.jpg")
-	data = db.child("Subsystem Status").child("Bed Detection").child("Camera").get() #Get value for Camera from Firebasse
-	assert data.val() == Camera.camera_detection("images/sample.jpg", "Google_MSCOCO_Model/detect.tflite", "Google_MSCOCO_Model/labelmap.txt") #Check if value from Firebase is the same as camera_detection method 
-	shutil.rmtree("images")
+	assert True == Camera.camera_detection("test_images/sample.jpg", "Google_MSCOCO_Model/detect.tflite", "Google_MSCOCO_Model/labelmap.txt") #Check if picture taken with person returns True
+	assert False == Camera.camera_detection("test_images/sample1.jpg", "Google_MSCOCO_Model/detect.tflite", "Google_MSCOCO_Model/labelmap.txt") #Check if picture taken with no person returns false
