@@ -65,7 +65,6 @@ def sprayDeactivated():
   print("spray still activated")
   return True
 
-
 def main():
   print("main")
   sprayState = sprayActivated()
