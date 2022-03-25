@@ -93,10 +93,8 @@ def sprayActivated():
               # then activate the Spray using the stepper motor
               db.child(ds).child("Spray").child("Stepper Motor").set(True) # DATA FORMAT True (Boolean)
               
-
               moveSMon()
               
-
               print("spray now activated")
               return True # The spray is activated
   print("spray still deactivated")
@@ -125,7 +123,6 @@ def sprayDeactivated():
       return False
   print("spray still activated")
   return True
-
 
 def main():
     try:
