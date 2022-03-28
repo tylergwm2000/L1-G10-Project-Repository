@@ -7,7 +7,7 @@ ___
    16.5
 2. **Give rough breakdown of hours spent on 1-3 of the following:**
    (meetings, information gathering, design, research, brainstorming, evaluating options, prototyping options, writing/documenting, refactoring)
-   - Wrote Tech Memo draft and receiving feedback from peers on it: 3 hours
+   - Wrote technical memo draft and receiving feedback from peers on it: 3 hours
    - Held in person meeting with Tyler & Leenesh for going over technical demo code used for each subsystem and test cases for subsystems: 9.5 hours
    - Create spray subsytem hardware test cases and ensure the tests function well for technical demo : 3 hours
    - Held ITP metrics meeting: 1 hour
