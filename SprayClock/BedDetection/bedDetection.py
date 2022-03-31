@@ -45,6 +45,9 @@ def loadDetection(hx, bedWeight):
 	print("Load Sensor: ")
 	print("Bed Weight: {}g".format(bedWeight))
 	current = hx.get_grams()
+	hx.power_down()
+	sleep(0.001)
+	hx.power_up()
 	print("Current Weight: {}g".format(current))
 	difference = int(current) - int(bedWeight)
 	if difference > 0:
@@ -89,7 +92,11 @@ def main():
 			shutil.rmtree("images")
 		os.mkdir("images")
 		key = 0 #Key for naming pictures
-		bedWeight = hx.get_grams() #Get weight of the bed
+		#Get weight of the bed then prepare for next reading
+		bedWeight = hx.get_grams()
+		hx.power_down()
+		sleep(0.001)
+		hx.power_up()
 		sleepTimeSet = False
 		while (True): #Infinite loop
 			now = datetime.now()

@@ -16,7 +16,6 @@ def setup():
 		if (GPIO.input(hx.DOUT) == 0):
 			ready = False
 		if (GPIO.input(hx.DOUT) == 1):
-			print("Scale is ready!")
 			ready = True
 
 #Perform calibration of load sensor
@@ -40,7 +39,7 @@ def cleanAndExit():
 	print("Bye!")
 	sys.exit()
 
-#Main function 
+#Main function
 if __name__ == "__main__":
 	setup()
 	calibrate()
@@ -52,7 +51,7 @@ if __name__ == "__main__":
 			time.sleep(0.001)
 			hx.power_up()
 			print("Item weight is {} grams.\n".format(val))
-			choice = input("Please choose:\n [1]Recalibrate \n [2]Display offset and scale and weight an item\n [0]Clean and exit the system")
+			choice = input("Please choose:\n [1]Recalibrate \n [2]Display offset and scale and weight an item\n [0]Clean and exit the system\n>")
 			if choice == '1':
 				calibrate()
 			elif choice == '2':
