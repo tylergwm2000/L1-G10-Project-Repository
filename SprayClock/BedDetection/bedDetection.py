@@ -1,4 +1,8 @@
-#bedDetection.py implements Bed Detection Subsystem and uses the Load Cell and RPi camera
+#bedDetection.py implements Bed Detection Subsystem and uses the Load Cell and RPi camera through the
+#hx711 and camera python files. This program will use the load cell to measure weight values and compare
+#them to determine if a person is in bed or not. The RPi camera will be used to take images which can be
+#sent through a tensorflow model to determine if a person is detected in the image or not.
+
 #Import required libraries
 from camera import Camera
 import pyrebase
@@ -20,45 +24,75 @@ def init_firebase():
 	db = firebase.database()
 	return db
 
+#Perform calibration of load sensor by using known weight item
+#Input: load sensor class hx711 object
+def calibrate_loadSensor(hx):
+	print("Calibrating Load Sensor: ")
+	checkReady = input("Please remove any item from the load sensor. Press any key when ready.")
+	offset = hx.read_average()
+	hx.set_offset(offset)
+	checkReady = input("Place any known weight item on the load sensor. Press any key when ready.")
+	measured_weight = (hx.read_average() - hx.get_offset())
+	item_weight = input("Please enter item's weight in grams. \n>")
+	scale = int(measured_weight)/int(item_weight)
+	hx.set_scale(scale)
+	checkReady = input("Load sensor is now calibrated, please place under bed mattress. Press any key when ready.")
+
 #Perform detection using load sensor by comparing weight of bed with current weight
+#Input: load sensor class hx711 object and (long) bed weight value
+#Output: returns boolean of whether person is detected (True) or not (False)
 def loadDetection(hx, bedWeight):
+	print("Load Sensor: ")
+	print("Bed Weight: {}g".format(bedWeight))
 	current = hx.get_grams()
+	print("Current Weight: {}g".format(current))
 	difference = int(current) - int(bedWeight)
-	print(difference)
 	if difference > 0:
 		return True
 	else:
 		return False
 
-#Perrform necessary setup than infinitely perform bed detection algorithm and update results to firebase
+#Update results to Firebase
+#Input: database object, boolean of whether camera detects person, boolean of whether load sensor detects person,
+#       boolean of whether sleep time has been set yet, current datetime object
+def update_Firebase(db, cameraDetects, loadSensorDetects, sleepTimeSet, now):
+	#Update Subsystem Status table
+	parent = "Subsystem Status"
+	subsystem = "Bed Detection"
+	current_time = now.strftime("%H:%M")
+	data = {"Camera": cameraDetects, "Load Sensor": loadSensorDetects}
+	db.child(parent).child(subsystem).update(data)
+	#Update Sleep Data table
+	subsystem = "Web GUI"
+	alarmSet = db.child(parent).child(subsystem).child("setAlarm").get()
+	parent = "Sleep Data"
+	if ((cameraDetects or loadSensorDetects) and (not sleepTimeSet)): #If person has been detected for the first time set current time as time person slept
+		data = {"SleepTime": current_time}
+		if (now.hour >= 12 and now.hour <= 23): #Person slept between 12:00 PM and 12:00 AM
+			current_day = now.strftime("%m-%d-%Y")
+		else: #Person slept between 12:00 AM and 12:00 PM next day
+			current_day = (now - timedelta(days = 1)).strftime("%m-%d-%Y")
+		db.child(parent).child(current_day).update(data)
+		return True
+	return sleepTimeSet
+
+#Perform necessary setup than infinitely perform bed detection algorithm and update results to firebase
 def main():
 	try:
 		#Setup firebase, camera, load sensor
 		db = init_firebase()
 		camera = Camera.init_camera()
 		hx = HX711(5,6)
-		#Calibrate load sensor
-		#checkReady = input("Remove any items from the load sensor. Press any key when ready.")
-		#offset = hx.read_average()
-		#hx.set_offset(offset)
-		#checkReady = input("Place any known weight item on the load sensor. Press any key when ready.")
-		#measured_weight = (hx.read_average()-hx.get_offset())
-		#item_weight = input("Please enter item's weight in grams.\n>")
-		#scale = int(measured_weight)/int(item_weight)
-		#hx.set_scale(scale)
-		#checkReady = input("Load sensor ready for use, place under bed. Press any key when ready.")
-		#Delete images folder if it already exists than create it for storing images
+		calibrate_loadSensor(hx)
+		#Delete images folder if it already exists then create it for storing temporary images
 		if os.path.isdir("images"):
 			shutil.rmtree("images")
 		os.mkdir("images")
-		parent = "Subsystem Status"
-		subsystem = "Bed Detection"
 		key = 0 #Key for naming pictures
 		bedWeight = hx.get_grams() #Get weight of the bed
 		sleepTimeSet = False
 		while (True): #Infinite loop
 			now = datetime.now()
-			current_time = now.strftime("%H:%M")
 			#File locations of where to store image, where tensorflow model is stored, where label for tensorflow model is stored
 			imagefile = "images/{}-{}-{}_{}.jpg".format(now.year, now.month, now.day, key)
 			modelfile = "Google_MSCOCO_Model/detect.tflite"
@@ -68,22 +102,14 @@ def main():
 			cameraDetects = Camera.camera_detection(imagefile, modelfile, labelfile)
 			#Check for person detection using load sensor
 			loadSensorDetects = loadDetection(hx, bedWeight)
-			data = {"Camera": cameraDetects, "Load Sensor": loadSensorDetects}
-			#Update results to firebase
-			db.child(parent).child(subsystem).update(data)
-			if (cameraDetects or loadSensorDetects): #If person has been detected for first time upload current time for time person slept
-				data = {"SleepTime": current_time}
-				if (now.hour >= 0 and now.hour <= 23): #Slept between 12:00 PM and 12:00 AM
-					current_day = now.strftime("%m-%d-%Y")
-				else: #Slept between 12:00 AM and 12:00 PM
-					current_day = (now - timedelta(days=1)).strftime("%m-%d-%Y")
-				if (not sleepTimeSet):
-					db.child("Sleep Data").child(current_day).update(data)
-					sleepTimeSet = True
-			if (now.hour == 23 and now.minute == 59): #If day is about to change, update key value for image naming 
+			#Update Firebase and necessary variables
+			sleepTimeSet = update_Firebase(db, cameraDetects, loadSensorDetects, sleepTimeSet, now)
+			if (now.hour == 23 and now.minute == 59): #If day is about to change, reset key value for image naming
 				key = 0
 			else:
 				key += 1
+			if (db.child("Subsystem Status").child("Alarm").child("Button").get()): #If person has woken up, reset sleepTimeSet boolean
+				sleepTimeSet = False
 			sleep(60) #Iterate through loop every minute
 	except (KeyboardInterrupt, SystemExit): #Handling interrupt and system exit
 		print("Exiting bedDetection.py")

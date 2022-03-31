@@ -31,8 +31,8 @@ class Camera:
 	def camera_detection(image, model, label):
 		personDetected = False #Initial boolean variable
 		min_confidence_threshold = 0.5 #Minimum confidence to pass
-		graph_name = 'detect.tflite' #Name of tflite model file
-		labelmap_name = 'labelmap.txt' #Name of labelmap file
+		graph_name = "detect.tflite" #Name of tflite model file
+		labelmap_name = "labelmap.txt" #Name of labelmap file
 		current_dir = os.getcwd() #Current directory
 
 		#Paths to image, model, and label
@@ -41,7 +41,7 @@ class Camera:
 		path_to_label = os.path.join(current_dir, label)
 
 		#Load label map into list and remove weird first label of ??? that causes error
-		with open(path_to_label, 'r') as f:
+		with open(path_to_label, "r") as f:
 			labels = [line.strip() for line in f.readlines()]
 		del(labels[0])
 
@@ -52,13 +52,13 @@ class Camera:
 		#Get model details
 		input_details = interpreter.get_input_details()
 		output_details = interpreter.get_output_details()
-		height = input_details[0]['shape'][1]
-		width = input_details[0]['shape'][2]
-		floating_model = (input_details[0]['dtype'] == np.float32)
+		height = input_details[0]["shape"][1]
+		width = input_details[0]["shape"][2]
+		floating_model = (input_details[0]["dtype"] == np.float32)
 
 		#Check if model is created for TensorFlow2 or TensorFlow1
-		outname = output_details[0]['name']
-		if ('StatefulPartitionedCall' in outname): #TensorFlow2 model
+		outname = output_details[0]["name"]
+		if ("StatefulPartitionedCall" in outname): #TensorFlow2 model
 			boxes_idx = 1
 			classes_idx = 3
 			scores_idx = 0
@@ -76,16 +76,17 @@ class Camera:
 			inputdata = (np.float32(inputdata) - 127.5)/127.5
 
 		#Perform object detection by running model with image as input
-		interpreter.set_tensor(input_details[0]['index'], inputdata)
+		interpreter.set_tensor(input_details[0]["index"], inputdata)
 		interpreter.invoke()
-		classes = interpreter.get_tensor(output_details[classes_idx]['index'])[0] #Class index of detected objects
-		scores = interpreter.get_tensor(output_details[scores_idx]['index'])[0] #Confidence of detected objects
+		classes = interpreter.get_tensor(output_details[classes_idx]["index"])[0] #Class index of detected objects
+		scores = interpreter.get_tensor(output_details[scores_idx]["index"])[0] #Confidence of detected objects
 
 		#Loop through all detected objects
+		print("Camera Sensor: ")
 		for i in range(len(scores)):
 			object = labels[int(classes[i])] # Get object name from labels list using class index
-			print('{} detected with {}% confidence'.format(object, int(scores[i]*100)))
+			print("{} detected with {}% confidence".format(object, int(scores[i]*100)))
 			if ((scores[i] > min_confidence_threshold) and (scores[i] <= 1.0)):
-				if (object == 'person'):
+				if (object == "person"):
 					personDetected = True
 		return personDetected

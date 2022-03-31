@@ -58,12 +58,11 @@ class HX711:
 	def get_offset(self):
 		return self.OFFSET
 
-	#Read data from HX711 chip based off of code in documentation in C programming language at following link:
+	#Read data from HX711 chip, this code is based off of code in C programming language from document at following link:
 	#https://cdn.sparkfun.com/datasheets/Sensors/ForceFlex/hx711_english.pdf on page 8
 	def read(self):
 		#Check if chip is ready
 		while (GPIO.input(self.DOUT) != 0):
-			print('HX711 no input')
 			pass
 
 		count = 0
