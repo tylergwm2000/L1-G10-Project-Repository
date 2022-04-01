@@ -4,6 +4,13 @@ from datetime import datetime
 import time
 import RPi.GPIO as GPIO
 
+#Need to add display and buzzer GPIO setup
+GPIO.setwarnings(False) # No warning will be recognized at the time
+GPIO.setmode(GPIO.BCM) # This will be used to let us use pin numbers
+GPIO.setup(14, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # Set pin 8 to be an input pin
+GPIO.add_event_detect(14,GPIO.RISING,callback=buttonPressed) # Adding an event from pin 14
+#Is this necessary? statement = input("If you want to quit, press enter\n") # Program will run until someone has clicked enter
+
 def init_firebase():
         config = {
                 "apiKey": "AIzaSyDo00f19D_1SEPSYfjlNw9KkVkUNf-jyLw",
@@ -21,27 +28,33 @@ def get_alarms():
         allData_list = allData.each()
         options = []
         for data in allData_list:
-                alarmtime = datetime.strptime(data.val()["Time"], "%H:%M")
-                options.append(alarmtime)
+                alarmtime = alarm.val()["Time"]
+		dayOfAlarm = alarm.val()["Day"]
+                options.append(dayOfAlarm + " " + alarmTime)
         return options
 
 def showTime():
-        while True:
-                time.sleep(2)
-                time_now = datetime.now() #time_now is the current ti
-                curr_time = time_now.strftime("%H:%M") #curr_time is what will be used to print current time
-                curr_date = time.now.strftime("%d/%m/%Y") #curr_date is what will be used to print current date
-                print("Current date is:",curr_date)
-                print(curr_time)
-                break
+        now = datetime.now() #now is the current datetime
+	curr_time = now.strftime("%H:%M") #curr_time is the current time
+	curr_date = now.strftime("%m-%d-%Y") #curr_date is the current date
+	#Temporarily prints (Should be displayed on 16x2 Screen)
+	print("Current date is: {}".format(curr_date))
+	print(curr_time)
 
-def ringAlarm():
+def ringAlarm(alarmStatus = False):
+	if (alarmStatus): #If alarm currently ringing, continue
+		return True
         new_alarm = get_alarms()
-        time_now = datetime.now()
+        now = datetime.now()
+	weekday = now.weekday()
+	curr_time = now.strftime("%H:%M")
         for alarm in new_alarm:
-                if new_alarm == time_now.strftime("%H:%M"):
+		alarm_text = alarm.split()
+		alarm_day = alarm_text[0].strftime("%A").weekday()
+		alarm_time = alarm_text[1].strftime("%H:%M")
+                if alarm_day == weekday and curr_time == alarm_time:
                         print("alarmClockRinging")
-                        deleteAlarm(new_alarm)
+			#Need to implement buzzer ringing here
                         return True
                 else:
                         print("alarmClockIdle")
@@ -49,21 +62,30 @@ def ringAlarm():
 
 def buttonPressed(channel):
         print("Buttonpressed")
-GPIO.setwarnings(False) # No warning will be recognized at the time
-GPIO.setmode(GPIO.BCM) # This will be used to let us use pin numbers
-GPIO.setup(14, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # Set pin 8 to be an input pin
-GPIO.add_event_detect(14,GPIO.RISING,callback=buttonPressed) # Adding an event from pin 14
-statement = input("If you want to quit, press enter\n\n") # Program will run until someone has clicked enter
-GPIO.cleanup()
-
-
+	#Update Subsystem Status table
+	data = {"Button": True}
+	db.child("Subsystem Status").child("Alarm Clock").update(data)
+	#Update Sleep Data table
+	now = datetime.now()
+	curr_time = now.strftime("%H:%M")
+	sleep_day = (now - timedelta(days = 1)).strftime("%m-%d-%Y")
+	data = {"WakeTime": curr_time}
+	db.child("Sleep Data").child(sleep_day).update(data)
 
 def main():
-        db = init_firebase()
-        parent = "Subsystem Status"
-        subsystem = "Alarm Clock"
-        data = {"Buzzer": ringAlarm(), "Button": True}
-        db.child(parent).child(subsystem).update(data)
+	try:
+        	db = init_firebase()
+        	parent = "Subsystem Status"
+        	subsystem = "Alarm Clock"
+		while(True):
+			showTime()
+			alarmStatus = ringAlarm(alarmStatus) #Need to figure out how to turn off alarm once it begins ringing (global variable?)
+        		data = {"Buzzer": alarmStatus}
+        		db.child(parent).child(subsystem).update(data)
+			sleep(60)
+	except(KeyboardInterrupt, SystemExit):
+		print("Alarm Subsystem Exiting")
+		GPIO.cleanup()
 
 if __name__ == "__main__":
         main()
