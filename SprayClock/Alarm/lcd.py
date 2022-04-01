@@ -1,6 +1,9 @@
 import RPi.GPIO as GPIO
 import time
 
+#This program was created to have a software implementation of our LCD screen after physically wiring it to the breadboard.
+#The GPIO logic in this program was taken from the following site as reference. https://www.raspberrypi-spy.co.uk/2012/07/16x2-lcd-module-control-using-python/
+
 # GPIO to LCD mapping
 LCD_RS = 40 # Pi pin 21
 LCD_E = 38 # Pi pin 20
