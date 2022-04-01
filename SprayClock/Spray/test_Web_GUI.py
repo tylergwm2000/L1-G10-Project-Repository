@@ -14,7 +14,7 @@ db = firebase.database()
 
 def test_SettingAlarmCommunication():
 	backend.setButtonClicked("Monday", "14:50")
-	alarms = backend.get_alarms()
+	alarms = backend.getAlarms()
 	expected = "Monday 14:50"
 	assert alarms[len(alarms)-1] == expected
 	data = db.child("Subsystem Status").child("Web GUI").get()
@@ -23,7 +23,7 @@ def test_SettingAlarmCommunication():
 
 def test_DeleteAlarmCommunication():
 	backend.removeButtonClicked("Monday 14:50")
-	alarms = backend.get_alarms()
+	alarms = backend.getAlarms()
 	for alarm in alarms:
 		assert alarm != "Monday 14:50"
 	data = db.child("Subsystem Status").child("Web GUI").get()
@@ -31,7 +31,7 @@ def test_DeleteAlarmCommunication():
 	assert data.val() == expected
 
 def test_GetAlarmsCommunication():
-	options = backend.get_alarms()
+	options = backend.getAlarms()
 	data = db.child("Set Alarms").get()
 	data_list = data.each()
 	expected = []
