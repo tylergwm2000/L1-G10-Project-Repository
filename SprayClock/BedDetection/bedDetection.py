@@ -14,7 +14,7 @@ import shutil
 from datetime import datetime, timedelta
 
 #Initialize firebase database and return as object
-def init_firebase():
+def initFirebase():
 	config = {
 		"apiKey": "AIzaSyDo00f19D_1SEPSYfjlNw9KkVkUNf-jyLw",
 		"authDomain": "sprayclock-4e902.firebaseapp.com",
@@ -26,15 +26,15 @@ def init_firebase():
 
 #Perform calibration of load sensor by using known weight item
 #Input: load sensor class hx711 object
-def calibrate_loadSensor(hx):
+def calibrateLoadSensor(hx):
 	print("Calibrating Load Sensor: ")
 	checkReady = input("Please remove any item from the load sensor. Press any key when ready.")
 	offset = hx.read_average()
 	hx.set_offset(offset)
 	checkReady = input("Place any known weight item on the load sensor. Press any key when ready.")
-	measured_weight = (hx.read_average() - hx.get_offset())
-	item_weight = input("Please enter item's weight in grams. \n>")
-	scale = int(measured_weight)/int(item_weight)
+	measuredWeight = (hx.read_average() - hx.get_offset())
+	itemWeight = input("Please enter item's weight in grams. \n>")
+	scale = int(measuredWeight)/int(itemWeight)
 	hx.set_scale(scale)
 	checkReady = input("Load sensor is now calibrated, please place under bed mattress. Press any key when ready.")
 
@@ -50,7 +50,7 @@ def loadDetection(hx, bedWeight):
 	hx.power_up()
 	print("Current Weight: {}g".format(current))
 	difference = int(current) - int(bedWeight)
-	if difference > 0:
+	if difference > 100: #Difference greater than at least 100g
 		return True
 	else:
 		return False
@@ -58,24 +58,25 @@ def loadDetection(hx, bedWeight):
 #Update results to Firebase
 #Input: database object, boolean of whether camera detects person, boolean of whether load sensor detects person,
 #       boolean of whether sleep time has been set yet, current datetime object
-def update_Firebase(db, cameraDetects, loadSensorDetects, sleepTimeSet, now):
+#Output: returns boolean of whether sleep time has been set
+def updateFirebase(db, cameraDetects, loadSensorDetects, sleepTimeSet, now):
 	#Update Subsystem Status table
 	parent = "Subsystem Status"
 	subsystem = "Bed Detection"
-	current_time = now.strftime("%H:%M")
+	currentTime = now.strftime("%H:%M")
 	data = {"Camera": cameraDetects, "Load Sensor": loadSensorDetects}
 	db.child(parent).child(subsystem).update(data)
 	#Update Sleep Data table
 	subsystem = "Web GUI"
 	alarmSet = db.child(parent).child(subsystem).child("setAlarm").get()
 	parent = "Sleep Data"
-	if ((cameraDetects or loadSensorDetects) and (not sleepTimeSet)): #If person has been detected for the first time set current time as time person slept
-		data = {"SleepTime": current_time}
+	if (cameraDetects and loadSensorDetects and (not sleepTimeSet)): #If person has been detected for the first time set current time as time person slept
+		data = {"SleepTime": currentTime}
 		if (now.hour >= 12 and now.hour <= 23): #Person slept between 12:00 PM and 12:00 AM
-			current_day = now.strftime("%m-%d-%Y")
+			currentDay = now.strftime("%m-%d-%Y")
 		else: #Person slept between 12:00 AM and 12:00 PM next day
-			current_day = (now - timedelta(days = 1)).strftime("%m-%d-%Y")
-		db.child(parent).child(current_day).update(data)
+			currentDay = (now - timedelta(days = 1)).strftime("%m-%d-%Y")
+		db.child(parent).child(currentDay).update(data)
 		return True
 	return sleepTimeSet
 
@@ -83,10 +84,10 @@ def update_Firebase(db, cameraDetects, loadSensorDetects, sleepTimeSet, now):
 def main():
 	try:
 		#Setup firebase, camera, load sensor
-		db = init_firebase()
+		db = initFirebase()
 		camera = Camera.init_camera()
 		hx = HX711(5,6)
-		calibrate_loadSensor(hx)
+		calibrateLoadSensor(hx)
 		#Delete images folder if it already exists then create it for storing temporary images
 		if os.path.isdir("images"):
 			shutil.rmtree("images")
@@ -110,12 +111,12 @@ def main():
 			#Check for person detection using load sensor
 			loadSensorDetects = loadDetection(hx, bedWeight)
 			#Update Firebase and necessary variables
-			sleepTimeSet = update_Firebase(db, cameraDetects, loadSensorDetects, sleepTimeSet, now)
+			sleepTimeSet = updateFirebase(db, cameraDetects, loadSensorDetects, sleepTimeSet, now)
 			if (now.hour == 23 and now.minute == 59): #If day is about to change, reset key value for image naming
 				key = 0
 			else:
 				key += 1
-			if (db.child("Subsystem Status").child("Alarm").child("Button").get()): #If person has woken up, reset sleepTimeSet boolean
+			if (db.child("Subsystem Status").child("Alarm Clock").child("Button").get().val()): #If person has woken up, reset sleepTimeSet boolean
 				sleepTimeSet = False
 			sleep(60) #Iterate through loop every minute
 	except (KeyboardInterrupt, SystemExit): #Handling interrupt and system exit
