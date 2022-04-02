@@ -4,6 +4,13 @@ from datetime import datetime
 import time
 import RPi.GPIO as GPIO
 
+#As this file does not exceed 70 lines, it does not meet the requirement of 100 lines, therefore I will b uploading a second file to EduFLow
+#This program was created to design a simple alarm clock for use in our team project the SprayClock.
+#It contains functions to get any set alarms from a list, a function to show the current time and date, a function which will ring once the current time matches time of alam, a function for push button
+#and finally a main method to act as our driver code to send information to the firebase which is configured in our fake function init_firebase()
+#Note that the firebase configuration was made into a function so that it will not have to be configured each time in seperate files
+
+#The logic used for the GPIO below was created after using the following link for reference https://raspberrypihq.com/use-a-push-button-with-raspberry-pi-gpio/
 #Need to add display and buzzer GPIO setup
 GPIO.setwarnings(False) # No warning will be recognized at the time
 GPIO.setmode(GPIO.BCM) # This will be used to let us use pin numbers
