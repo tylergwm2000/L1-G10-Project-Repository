@@ -30,7 +30,7 @@ class Camera:
 	#Using tensorflow object detection API, detect if person is in image with over confidence of 50%
 	def camera_detection(image, model, label):
 		personDetected = False #Initial boolean variable
-		min_confidence_threshold = 0.5 #Minimum confidence to pass
+		min_confidence_threshold = 0.35 #Minimum confidence to pass
 		graph_name = "detect.tflite" #Name of tflite model file
 		labelmap_name = "labelmap.txt" #Name of labelmap file
 		current_dir = os.getcwd() #Current directory
