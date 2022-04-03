@@ -31,12 +31,12 @@ def init_firebase():
 
 def get_alarms():
         db = init_firebase()
-        allData = db.child("Set Alarms").get()
+	allData = db.child("Set Alarms").get()
         allData_list = allData.each()
         options = []
         for data in allData_list:
-                alarmtime = alarm.val()["Time"]
-		dayOfAlarm = alarm.val()["Day"]
+                alarmtime = data.val()["Time"]
+		dayOfAlarm = data.val()["Day"]
                 options.append(dayOfAlarm + " " + alarmTime)
         return options
 
@@ -46,38 +46,45 @@ def showTime():
 	curr_date = now.strftime("%m-%d-%Y") #curr_date is the current date
 	#Temporarily prints (Should be displayed on 16x2 Screen)
 	print("Current date is: {}".format(curr_date))
-	print(curr_time)
+	print("Current time is: {}".format(curr_time))
 
 def ringAlarm(alarmStatus = False):
+	db = init_firebase()
+	camera_detection = db.child("Subsystem Status").child("Bed Detection").child("Camera").get().val()
+	load_detection = db.child("Subsystem Status").child("Bed Detection").child("Load Sensor").get().val()
 	if (alarmStatus): #If alarm currently ringing, continue
 		return True
-        new_alarm = get_alarms()
-        now = datetime.now()
-	weekday = now.weekday()
-	curr_time = now.strftime("%H:%M")
-        for alarm in new_alarm:
-		alarm_text = alarm.split()
-		alarm_day = alarm_text[0].strftime("%A").weekday()
-		alarm_time = alarm_text[1].strftime("%H:%M")
-                if alarm_day == weekday and curr_time == alarm_time:
-                        print("alarmClockRinging")
-			#Need to implement buzzer ringing here
-                        return True
-                else:
-                        print("alarmClockIdle")
-                        return False
+	if (camera_detection and load_detection): #If user is in bed
+        	new_alarm = get_alarms()
+        	now = datetime.now()
+		weekday = now.weekday()
+		curr_time = now.strftime("%H:%M")
+        	for alarm in new_alarm:
+			alarm_text = alarm.split()
+			alarm_day = alarm_text[0].strftime("%A").weekday()
+			alarm_time = alarm_text[1].strftime("%H:%M")
+                	if alarm_day == weekday and curr_time == alarm_time: #If it is currently the alarmtime and day of alarm
+                        	print("alarmClockRinging")
+				#Need to implement buzzer ringing here
+                        	return True
+	else:
+		print("alarmClockIdle")
+		return False
 
 def buttonPressed(channel):
         print("Buttonpressed")
+	db = init_firebase()
 	#Update Subsystem Status table
-	data = {"Button": True}
-	db.child("Subsystem Status").child("Alarm Clock").update(data)
-	#Update Sleep Data table
-	now = datetime.now()
-	curr_time = now.strftime("%H:%M")
-	sleep_day = (now - timedelta(days = 1)).strftime("%m-%d-%Y")
-	data = {"WakeTime": curr_time}
-	db.child("Sleep Data").child(sleep_day).update(data)
+	data = {"Button": True, "Buzzer": False}
+	#Only update tables if Alarm is ringing
+	if (db.child("Subsystem Status").child("Alarm Clock").child("Buzzer").get().val() == True):
+		db.child("Subsystem Status").child("Alarm Clock").update(data)
+		#Update Sleep Data table
+		now = datetime.now()
+		curr_time = now.strftime("%H:%M")
+		sleep_day = (now - timedelta(days = 1)).strftime("%m-%d-%Y")
+		data = {"WakeTime": curr_time}
+		db.child("Sleep Data").child(sleep_day).update(data)
 
 def main():
 	try:
@@ -86,9 +93,10 @@ def main():
         	subsystem = "Alarm Clock"
 		while(True):
 			showTime()
-			alarmStatus = ringAlarm(alarmStatus) #Need to figure out how to turn off alarm once it begins ringing (global variable?)
+			alarmStatus = ringAlarm(alarmStatus) #Check if alarm should ring or not
         		data = {"Buzzer": alarmStatus}
         		db.child(parent).child(subsystem).update(data)
+			alarmStatus = db.child(parent).child(subsystem).child("Buzzer").get().val() #If button ever pressed update alarmStatus to False
 			sleep(60)
 	except(KeyboardInterrupt, SystemExit):
 		print("Alarm Subsystem Exiting")
