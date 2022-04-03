@@ -22,12 +22,12 @@ dropdown1 = dcc.Dropdown(
 	options = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
 	searchable = False,
 	style = {'width': '50%'},
-	placeholder = "Select a day of the week")
+	placeholder = "Alarm Day Input: Select a day of the week")
 input = dcc.Input(
 	id = "alarmInput",
 	type = "text",
 	maxLength = 5,
-	placeholder = "Ex: 08:00",
+	placeholder = "Alarm Time Input Ex: 08:00",
 	debounce = True)
 addBtn = html.Button("Set Alarm", id = "setButton", title = "Adds alarm of input information", n_clicks = 0)
 removeBtn = html.Button("Remove Alarm", id = "removeButton", title = "Removes current alarm selected in dropdown", n_clicks = 0)
@@ -92,4 +92,4 @@ def updateGraph(timeLength):
 
 #Start website/dash application
 if __name__ == "__main__":
-	app.run_server(debug = True, host = "0.0.0.0", port = "8050")
+	app.run_server(debug = False, host = "0.0.0.0", port = "8050")
