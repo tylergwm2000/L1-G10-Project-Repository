@@ -150,7 +150,12 @@ It will first ask the user to calibrate the load sensor, after which the program
 ![alt text](https://github.com/tylergwm2000/L1-G10-Project-Repository/blob/main/images/BedDetectionOutput2.png)  
 
 ### Alarm Clock Subsystem
-
+To run the AlarmClock Subsystem, the main.py and the lcd.py in the Alarm folder must be run using the following commands:
+```
+python3 main.py
+python3 lcd.py
+```
+In theory it should work. However, for some reason the program causing the RPi to lose connection.
 ### Spray Subsystem
 
 ### Web GUI
