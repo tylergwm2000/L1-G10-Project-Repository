@@ -4,7 +4,7 @@
 ### Week: 11(Mar 28, 2022 - Apr 3, 2022)
 ___
 1. **How many hours did you spend on the project this week? (0-10)**
-    15.5
+    18.5
 2. **Give rough breakdown of hours spent on 1-3 of the following:**
    (meetings, information gathering, design, research, brainstorming, evaluating options, prototyping options, writing/documenting, refactoring)
    - Submitted backend.py for code review & reviewed and implemented suggested changes from peer: 1 hour
@@ -15,7 +15,7 @@ ___
    - Changed comparison value such that camera detection works even if person not facing camera: 30 mins
    - Refactored and looked over Alarm subsystem main.py code: 2 hours
    - Worked on slide deck for Final Video deliverable: 2 hours
-   - Held online meeting with group to record and finish up slide deck for Final Video: 5 hours
+   - Held online meeting with group to record and finish up slide deck for Final Video: 8 hours
 3. ***What did you accomplish this week?*** _(Be specific)_
   - I was able to go to Hacklab.to & learn many new skills and see many big engineering tools in person
   - I fixed Web GUI bugs and adjusted GUI elements for all device screens
