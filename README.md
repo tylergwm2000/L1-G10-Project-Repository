@@ -84,7 +84,7 @@ pip3 install virtualenv
 ```
 To ensure no conflicts occur for the installation of the following libraries create and start the virtual environment with the following commands:
 ```
-python3 -m venv name-of-environment          # Use an environment you think fits the occasion Ex. BedDetection
+python3 -m venv name-of-environment          # Use a name you think fits the occasion Ex. BedDetection
 source name-of-environment/bin/activate 
 ```
 If the environment was to ever be deactivated rerunning the `source name-of-environment/bin/activate` command will reactivate it.
@@ -111,9 +111,32 @@ After running the above command install the last package with the following comm
 ```
 python3 -m pip install tflite-support>=0.3.1
 ```
-If no errors occured, you have successfully installed all necessary libraries & packages for the Bed Detection Subsystem. 
+If no errors occured, you have successfully installed all necessary libraries & packages for the Bed Detection Subsystem.  
+### Alarm Clock Subsystem
+
+### Spray Subsystem
+
+### Web GUI
 
 ---
-## How to run the system
+## How to run the system  
+In order to run the entire system the following files will need to be run in each subsystem.
+
+### Bed Detection Subsystem
+For the Raspberry Pi running the Bed Detection Subsystem, the bedDetection.py file must be run using the following command:
+```
+python3 bedDetection.py
+```
+Once the command has been run and all wire connections and extra hardware is properly connected to the system, the program should show the following output.  
+It will first ask the user to calibrate the load sensor, after which the program will begin operating and will constantly check the load sensor and the camera inputs for person to be in bed. 
+
+![alt text](https://github.com/tylergwm2000/L1-G10-Project-Repository/blob/main/images/BedDetectionOutput1.png)  
+![alt text](https://github.com/tylergwm2000/L1-G10-Project-Repository/blob/main/images/BedDetectionOutput2.png)  
+
+### Alarm Clock Subsystem
+
+### Spray Subsystem
+
+### Web GUI
 
 ---
