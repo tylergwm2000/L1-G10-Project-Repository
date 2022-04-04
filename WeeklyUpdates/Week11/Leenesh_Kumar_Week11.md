@@ -4,12 +4,12 @@
 ### Week: 10(Mar 27, 2022 - Apr 3, 2022)
 ___
 1. **How many hours did you spend on the project this week? (0-10)**
-    10
+    12
 2. **Give rough breakdown of hours spent on 1-3 of the following:**
    (meetings, information gathering, design, research, brainstorming, evaluating options, prototyping options, writing/documenting, refactoring) 
    - Modified code to describe programs and to add flake8 output as comments: 1 hour
    - Submitted code for peer code review and evaluated others code to later reflect on feedback: 3 hours
-   - Met with Tyler and Celeste to create content for a video and record: 5 hours 
+   - Met with Tyler and Celeste to create content for a video and record: 7 hours 
    - Helped Tyler complete pull requests and organize github: 1 hour
 3. ***What did you accomplish this week?*** _(Be specific)_
   - I was able to submit my code for peer review and evaluate others code.
