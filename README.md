@@ -113,6 +113,22 @@ python3 -m pip install tflite-support>=0.3.1
 ```
 If no errors occured, you have successfully installed all necessary libraries & packages for the Bed Detection Subsystem.  
 ### Alarm Clock Subsystem
+The Alarm Clock Subsystem will need pyrebase, time, datetime, RPI.GPIO libraries
+
+Note that many of these libraries may already be installed on your RPi. However in the case that they are not, you can use the following commands:
+```
+sudo apt-get update //This will be helpful to make sure that all files and software is updated
+
+sudo apt-get upgrade // Will be good if you would like to upgrade the software version on your RPi
+
+python -m pip install pyrebase //You can use this to install the pyrebase library in you RPi, crucial to configure a connection to Realtime Firebase database from your python file
+
+python -m pip install time //This is used to install the time library in your RPi, crucial to set time of a particular format.
+
+python -m pip install datetime //This is used to install the datetime library in your RPi, crucial to get current date and time from real world to show in your clock
+
+python -m pip install RPI.GPIO//This is used to install the RPI.GPIO library in your RPi, crucial for linking the GPIO pin numbers from your hardware to software
+```
 
 ### Spray Subsystem
 
