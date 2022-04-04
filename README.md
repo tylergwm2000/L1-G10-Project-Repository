@@ -1,4 +1,119 @@
-# L1-G10-Project-Repository
+# SprayClock
+![alt text](https://github.com/tylergwm2000/L1-G10-Project-Repository/blob/main/images/SprayClock.jpg)
 ---
 #### Team Members: Tyler Mak, Leenesh Kumar, Celeste McCaffrey
-## Project Objectives
+#### Group: L1-G10W
+#### TA Name: Victoria Ajila
+#### Course Code: SYSC3010A
+---
+## Project Summary  
+![alt text](https://github.com/tylergwm2000/L1-G10-Project-Repository/blob/main/images/DeploymentDiagram.png)
+---
+### Repository Directory Structure
+The entire project is located in the SprayClock folder.  
+
+    .
+    ├── Lab 4                   # Folder corresponding to Lab 4 work 
+    ├── SprayClock              # SprayClock Project Folder
+    │   ├── Alarm               # Alarm Clock Subsystem Folder
+    │   │   ├── lcd.py                         # LCD Screen code
+    │   │   ├── main.py                        # Alarm Clock code
+    │   │   └── test_alarm.py                  # Alarm Clock test program
+    │   ├── Bed Detection       # Bed Detection Subsystem Folder
+    │   │   ├── GOOGLE_MSCOCO_Model            # TensorFlow Lite Model
+    │   │   ├── test_images                    # Test images for test cases
+    │   │   ├── bedDetection.py                # Bed Detection code
+    │   │   ├── camera.py                      # Camera code
+    │   │   ├── hx711.py                       # Load Sensor code
+    │   │   ├── testLoadSensor.py              # Load Sensor test program
+    │   │   └── test_bedDetection.py           # Bed Detection test program
+    │   └── Spray               # Spray Subsystem Folder
+    │   │   ├── backend.py                     # Website backend code
+    │   │   ├── frontend.py                    # Website frontend code
+    │   │   ├── sprayStepperMotor.py           # Spray code
+    │   │   ├── test_Web_GUI.py                # Web GUI test program
+    │   │   └── test_sprayTest.py              # Spray test program
+    ├── WeeklyUpdates           # Folder containing WIPURs for each group member each week. 
+    ├── images                  # Folder containing images for README.md file
+    └── README.md
+
+---
+## Necessary Hardware  
+The SprayClock project will use the following hardware:  
+
+The Bed Detection Subsystem will use:  
+- A Raspberry Pi 4
+- Raspberry Pi Camera v2 
+- HX711 Breakout Board
+- Load Cell  
+The wiring for the Bed Detection Subsystem is as follows:  
+![alt text](https://github.com/tylergwm2000/L1-G10-Project-Repository/blob/main/images/BedDetectionWiring.png)  
+
+The Alarm Clock Subsystem will use:  
+- A Raspberry Pi 4
+- Push Button
+- Active Buzzer
+- 16x2 LCD Screen
+- 10k Potentiometer  
+The wiring for the Alarm Clock Subsystem is as follows:  
+![alt text](https://github.com/tylergwm2000/L1-G10-Project-Repository/blob/main/images/AlarmClockWiring.png)  
+
+The Spray Subsystem will use:  
+- A Raspberry Pi 4
+- ULN2003 Stepper Motor Driver Board
+- 28BYJ-48 5V Stepper Motor  
+The wiring for the Spray Subsystem is as follows:  
+![alt text](https://github.com/tylergwm2000/L1-G10-Project-Repository/blob/main/images/SprayWiring.png)  
+---
+## Installation Instructions  
+Each subsystem will require different libraries to be installed. The instructions to install them will be shown below.  
+### Bed Detection Subsystem
+The Bed Detection Subsystem will need the Pyrebase4, Virtual Environment, TensorFlow Lite and OpenCV libraries.  
+Open the terminal and follow the instructions below. 
+If you haven't already enable the Raspberry Pi Camera by typing `sudo raspi-config`
+Once the Software Configuration Tool shows up, navigate to Interface Options then select the Legacy Camera Enable/Disable.
+Before any installation, if you haven't already run the commands:
+```
+sudo apt-get update  
+sudo apt-get upgrade
+```
+Now to install Pyrebase4 & Virtual Environment type the commands:  
+```
+python -m pip install pyrebase4
+pip3 install virtualenv
+```
+To ensure no conflicts occur for the installation of the following libraries create and start the virtual environment with the following commands:
+```
+python3 -m venv name-of-environment          # Use an environment you think fits the occasion Ex. BedDetection
+source name-of-environment/bin/activate 
+```
+If the environment was to ever be deactivated rerunning the `source name-of-environment/bin/activate` command will reactivate it.
+This environment will need to be activated to run any of the Bed Detection code.
+With the environment activated the terminal should look as follows: `(name-of-environment)pi@raspberrypi: ~$ `  
+Next is to install OpenCV using the following commands:  
+```
+sudo apt-get install libjpeg-dev libtiff5-dev libjasper-dev
+sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev 
+sudo apt-get install libxvidcore-dev libx264-dev
+sudo apt-get install libatlas-base-dev
+pip3 install opencv-python==4.5.3.56
+```
+The final step is to install TensorFlow Lite, first check which version of Python you are using with `python3 --version` then run the command in the table below:
+| Python Version | Command to Issue           |
+| ------------- |:-------------:| 
+| 3.9      | `pip3 install https://github.com/google-coral/pycoral/releases/download/v2.0.0/tflite_runtime-2.5.0.post1-cp39-cp39-linux_armv7l.whl` | 
+| 3.8      | `pip3 install https://github.com/google-coral/pycoral/releases/download/v2.0.0/tflite_runtime-2.5.0.post1-cp38-cp38-linux_armv7l.whl` | 
+| 3.7      | `pip3 install https://github.com/google-coral/pycoral/releases/download/v2.0.0/tflite_runtime-2.5.0.post1-cp37-cp37m-linux_armv7l.whl` | 
+| 3.6      | `pip3 install https://github.com/google-coral/pycoral/releases/download/v2.0.0/tflite_runtime-2.5.0.post1-cp36-cp36m-linux_armv7l.whl` | 
+| 3.5      | `pip3 install https://github.com/google-coral/pycoral/releases/download/release-frogfish/tflite_runtime-2.5.0-cp35-cp35m-linux_armv7l.whl` |  
+
+After running the above command install the last package with the following command:  
+```
+python3 -m pip install tflite-support>=0.3.1
+```
+If no errors occured, you have successfully installed all necessary libraries & packages for the Bed Detection Subsystem. 
+
+---
+## How to run the system
+
+---
