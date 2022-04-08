@@ -30,11 +30,13 @@ def calibrateLoadSensor(hx):
 	print("Calibrating Load Sensor: ")
 	checkReady = input("Please remove any item from the load sensor. Press any key when ready.")
 	offset = hx.read_average()
+	print("Offset set to {}".format(offset))
 	hx.set_offset(offset)
 	checkReady = input("Place any known weight item on the load sensor. Press any key when ready.")
 	measuredWeight = (hx.read_average() - hx.get_offset())
 	itemWeight = input("Please enter item's weight in grams. \n>")
 	scale = int(measuredWeight)/int(itemWeight)
+	print("The ratio from analog value to grams is {}".format(scale))
 	hx.set_scale(scale)
 	checkReady = input("Load sensor is now calibrated, please place under bed mattress. Press any key when ready.")
 
@@ -48,9 +50,9 @@ def loadDetection(hx, bedWeight):
 	hx.power_down()
 	sleep(0.001)
 	hx.power_up()
-	print("Current Weight: {}g".format(current))
+	print("Current Weight: {}g\n".format(current))
 	difference = int(current) - int(bedWeight)
-	if difference > 100: #Difference greater than at least 100g
+	if difference > 1000: #Difference greater than at least 1kg
 		return True
 	else:
 		return False
@@ -67,8 +69,6 @@ def updateFirebase(db, cameraDetects, loadSensorDetects, sleepTimeSet, now):
 	data = {"Camera": cameraDetects, "Load Sensor": loadSensorDetects}
 	db.child(parent).child(subsystem).update(data)
 	#Update Sleep Data table
-	subsystem = "Web GUI"
-	alarmSet = db.child(parent).child(subsystem).child("setAlarm").get()
 	parent = "Sleep Data"
 	if (cameraDetects and loadSensorDetects and (not sleepTimeSet)): #If person has been detected for the first time set current time as time person slept
 		data = {"SleepTime": currentTime}
@@ -118,7 +118,7 @@ def main():
 				key += 1
 			if (db.child("Subsystem Status").child("Alarm Clock").child("Button").get().val()): #If person has woken up, reset sleepTimeSet boolean
 				sleepTimeSet = False
-			sleep(60) #Iterate through loop every minute
+			sleep(10) #Iterate through loop every minute
 	except (KeyboardInterrupt, SystemExit): #Handling interrupt and system exit
 		print("Exiting bedDetection.py")
 		GPIO.cleanup()

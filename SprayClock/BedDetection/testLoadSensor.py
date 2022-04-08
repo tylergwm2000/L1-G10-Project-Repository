@@ -61,5 +61,6 @@ if __name__ == "__main__":
 				cleanAndExit()
 			else:
 				print("Invalid input.\n")
+
 	except (KeyboardInterrupt, SystemExit):
 		cleanAndExit()

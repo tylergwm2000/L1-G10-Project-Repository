@@ -25,8 +25,8 @@ def test_bedDetection_loadSensor():
 	hx.power_down()
 	sleep(0.001)
 	hx.power_up()
-	data = db.child("Subsystem Status").child("Bed Detection").child("Load Sensor").get() #Get value for Load Sensor from Firebase
-	assert data.val() == bedDetection.loadDetection(hx, bedWeight) #Check if value from Firebase is same as loadDetection method
+	assert False == bedDetection.loadDetection(hx, bedWeight) #Check loadDetection method returns False when no change in weight
+	assert True == bedDetection.loadDetection(hx, -100) #Check loadDetection method returns True when bedWeight is -100
 
 #Test if detecting from camera works
 def test_bedDetection_camera():
