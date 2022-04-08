@@ -118,7 +118,7 @@ def main():
 				key += 1
 			if (db.child("Subsystem Status").child("Alarm Clock").child("Button").get().val()): #If person has woken up, reset sleepTimeSet boolean
 				sleepTimeSet = False
-			sleep(10) #Iterate through loop every minute
+			sleep(60) #Iterate through loop every minute
 	except (KeyboardInterrupt, SystemExit): #Handling interrupt and system exit
 		print("Exiting bedDetection.py")
 		GPIO.cleanup()
