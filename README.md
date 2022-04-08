@@ -7,7 +7,11 @@
 #### Course Code: SYSC3010A
 ---
 ## Project Summary  
-![alt text](https://github.com/tylergwm2000/L1-G10-Project-Repository/blob/main/images/DeploymentDiagram.png)
+![alt text](https://github.com/tylergwm2000/L1-G10-Project-Repository/blob/main/images/DeploymentDiagram.png)  
+Alarm clocks are used around the world to help individuals keep track of time and to plan schedules for upcoming events. They have evolved throughout different eras to suit the needs of people who prefer the latest technology in their devices. One common problem however, is that people are not able to keep track of their sleep and see if they are undersleeping or oversleeping. The SprayClock will help individuals get their sleep schedules back on track by ensuring that they get their desired amount of sleep and prevent oversleeping by spraying water on people who are still in bed after their alarm goes off. The user will have the ability to check their sleep pattern on a website which will chart data from the past week or month. The website will also be the interface the user uses to set alarms, delete alarms, and check what alarms have been set. 
+
+In the image shown above, is a UML deployment diagram that describes our system and how it has been broken up into its respective subsystems. In this project, we will have a subsystem for our spray mechanism, a subsystem for our alarm, and a subsystem for bed detection. All of these subsystems will have a means to communicate to the Realtime Firebase database which will store all information received and use it to produce a graph on the Web GUI.
+
 ---
 ### Repository Directory Structure
 The entire project is located in the SprayClock folder.  
@@ -133,7 +137,14 @@ python -m pip install RPI.GPIO//This is used to install the RPI.GPIO library in 
 ### Spray Subsystem
 
 ### Web GUI
-
+The Web GUI will be hosted off of the Spray subsystem. So the following libraries will need to be installed on the Spray RPi: pyrebase, dash libraries, and pandas libraries.
+To install these libraries enter the following commands:
+```
+python -m pip install pyrebase4
+sudo apt-get install python3-numpy 
+sudo apt-get install python3-pandas
+pip3 install pyrebase4 dash dash_daq dash-extensions coloredlogs
+```
 ---
 ## How to run the system  
 In order to run the entire system the following files will need to be run in each subsystem.
@@ -159,5 +170,12 @@ In theory it should work. However, for some reason the program causing the RPi t
 ### Spray Subsystem
 
 ### Web GUI
-
+In order to run the Web GUI, the frontend.py file must be run using the following command:
+```
+python3 frontend.py
+```
+Once this command has been run, the Web GUI will begin running and you should be able to go to the website on any device connected to your home network through the following url:  
+Spray RPi IP Address:8050  Ex. 192.168.0.1:8050  
+The website should look as follows: 
+![alt text](https://github.com/tylergwm2000/L1-G10-Project-Repository/blob/main/images/Website.png) 
 ---
