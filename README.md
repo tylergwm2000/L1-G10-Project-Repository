@@ -20,6 +20,7 @@ The entire project is located in the SprayClock folder.
     ├── Lab 4                   # Folder corresponding to Lab 4 work 
     ├── SprayClock              # SprayClock Project Folder
     │   ├── Alarm               # Alarm Clock Subsystem Folder
+    │   │   ├── install_Alarm.sh               # Bash script to install libraries for Alarm subsystem
     │   │   ├── lcd.py                         # LCD Screen code
     │   │   ├── main.py                        # Alarm Clock code
     │   │   └── test_alarm.py                  # Alarm Clock test program
@@ -29,15 +30,18 @@ The entire project is located in the SprayClock folder.
     │   │   ├── bedDetection.py                # Bed Detection code
     │   │   ├── camera.py                      # Camera code
     │   │   ├── hx711.py                       # Load Sensor code
+    │   │   ├── install_BedDetection.sh        # Bash script to install libraries for Bed Detection subsystem
     │   │   ├── testLoadSensor.py              # Load Sensor test program
     │   │   └── test_bedDetection.py           # Bed Detection test program
-    │   └── Spray               # Spray Subsystem Folder
+    │   ├── Spray               # Spray Subsystem Folder
     │   │   ├── backend.py                     # Website backend code
     │   │   ├── frontend.py                    # Website frontend code
+    │   │   ├── install_Spray.sh               # Bash script to install libraries for Spray subsystem
     │   │   ├── sprayStepperMotor.py           # Spray code
     │   │   ├── test_Web_GUI.py                # Web GUI test program
     │   │   └── test_sprayTest.py              # Spray test program
-    ├── WeeklyUpdates           # Folder containing WIPURs for each group member each week. 
+    │   └── install.sh          # Bash script to install all necessary libraries for entire system  
+    ├── WeeklyUpdates           # Folder containing WIPURs for each group member each week  
     ├── images                  # Folder containing images for README.md file
     └── README.md
 
@@ -70,7 +74,7 @@ The wiring for the Spray Subsystem is as follows:
 ![alt text](https://github.com/tylergwm2000/L1-G10-Project-Repository/blob/main/images/SprayWiring.png)  
 ---
 ## Installation Instructions  
-Each subsystem will require different libraries to be installed. The instructions to install them will be shown below.  
+Each subsystem will require different libraries to be installed. If you don't mind installing all necessary libraries for the entire system you can run the bash script install.sh in the SprayClock folder using the command `./install.sh`. The instructions to install each subsystem's libraries separately will be shown below.  
 ### Bed Detection Subsystem
 The Bed Detection Subsystem will need the Pyrebase4, Virtual Environment, TensorFlow Lite and OpenCV libraries.  
 Open the terminal and follow the instructions below. 
@@ -94,6 +98,7 @@ source name-of-environment/bin/activate
 If the environment was to ever be deactivated rerunning the `source name-of-environment/bin/activate` command will reactivate it.
 This environment will need to be activated to run any of the Bed Detection code.
 With the environment activated the terminal should look as follows: `(name-of-environment)pi@raspberrypi: ~$ `  
+Now you can either run the command `./install_BedDetection.sh` or follow the remaining instructions below.  
 Next is to install OpenCV using the following commands:  
 ```
 sudo apt-get install libjpeg-dev libtiff5-dev libjasper-dev
@@ -119,7 +124,7 @@ If no errors occured, you have successfully installed all necessary libraries & 
 ### Alarm Clock Subsystem
 The Alarm Clock Subsystem will need pyrebase, time, datetime, RPI.GPIO libraries
 
-Note that many of these libraries may already be installed on your RPi. However in the case that they are not, you can use the following commands:
+Note that many of these libraries may already be installed on your RPi. However in the case that they are not, you can use the bash script through the command `./install_Alarm.sh` or through the following commands:
 ```
 sudo apt-get update //This will be helpful to make sure that all files and software is updated
 
@@ -138,7 +143,7 @@ python -m pip install RPI.GPIO//This is used to install the RPI.GPIO library in 
 
 ### Web GUI
 The Web GUI will be hosted off of the Spray subsystem. So the following libraries will need to be installed on the Spray RPi: pyrebase, dash libraries, and pandas libraries.
-To install these libraries enter the following commands:
+To install these libraries use the bash script through the command `./install_Spray.sh` or enter the following commands:
 ```
 python -m pip install pyrebase4
 sudo apt-get install python3-numpy 
