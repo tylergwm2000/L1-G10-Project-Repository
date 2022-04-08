@@ -10,21 +10,20 @@ def test_get_alarms():
 	allData_list = allData.each()
 	options = []
 	for data in allData_list:
-                alarmtime = datetime.strptime(data.val()["Time"], "%H:%M")
-                options.append(alarmtime)
+                alarmtime = data.val()["Time"]
+		dayOfAlarm = data.val()["Day"]
+                options.append(alarmtime + " " + dayofAlarm)
 	assert options==main.get_alarms()
 
-def test_showTime():
-	current_exp_time=main.showTime()
-   time_now = datetime.now()
-         curr_time = time_now.strftime("%H:%M")
-	assert curr_time = current_exp_time
-
 def test_ringAlarm():
+	db.child("Subsystem Status").child("Bed Detection").child("Camera").set(True)
+	db.child("Subsystem Status").child("Bed Detection").child("Load Sensor").set(True)
+	alarms = main.get_alarms()
 	time_now = datetime.now()
 	curre_time = time_now.strftime("%H:%M")
-	new_alarm = {"Day" : "Monday", "Time": curre_time}
-	db.child("Set Alarms").child(5).set(new_alarm)
+	weekday = time_now.weekday()
+	new_alarm = {"Day" : weekday, "Time": curre_time}
+	db.child("Set Alarms").child(len(alarms)).set(new_alarm)
 	expected = main.ringAlarm()
 	assert True == expected
 
