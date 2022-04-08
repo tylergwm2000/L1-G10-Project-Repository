@@ -178,4 +178,5 @@ Once this command has been run, the Web GUI will begin running and you should be
 Spray RPi IP Address:8050  Ex. 192.168.0.1:8050  
 The website should look as follows: 
 ![alt text](https://github.com/tylergwm2000/L1-G10-Project-Repository/blob/main/images/Website.png) 
+
 ---
