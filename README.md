@@ -141,7 +141,17 @@ python -m pip install RPI.GPIO//This is used to install the RPI.GPIO library in 
 
 ### Spray Subsystem
 
-### Web GUI
+### a. Stepper Motor
+The Spray Subsystem will need pyrebase, time, and RPI.GPIO libraries. It is also good practice to ensure your RPi is updated and has been upgraded if possible. Many of these libraries may already be installed on your RPi. However, to ensure these files are installed, please run through the commands below:
+```
+sudo apt-get update //ensuring all files and software is updated
+sudo apt-get upgrade //check on upgrade the software version on your RPi
+python -m pip install pyrebase // realtime Firebase database
+python -m pip install time // installing the time library in your RPi
+python -m pip install RPI.GPIO//installing the RPI.GPIO library in your RPi
+```
+
+### b. Web GUI
 The Web GUI will be hosted off of the Spray subsystem. So the following libraries will need to be installed on the Spray RPi: pyrebase, dash libraries, and pandas libraries.
 To install these libraries use the bash script through the command `./install_Spray.sh` or enter the following commands:
 ```
@@ -172,7 +182,13 @@ python3 main.py
 python3 lcd.py
 ```
 In theory it should work. However, for some reason the program causing the RPi to lose connection.
+
 ### Spray Subsystem
+In order to run the Spray Subsystem, the sprayStepperMotor.py file must be run using the following command:
+```
+python3 sprayStepperMotor.py
+```
+Once this command is run, the Spray Subsystem will be consistently checking in an infinite loop if the spray is activated or deactivated based on the user’s alarms.
 
 ### Web GUI
 In order to run the Web GUI, the frontend.py file must be run using the following command:
