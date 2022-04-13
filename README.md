@@ -189,6 +189,7 @@ In order to run the Spray Subsystem, the sprayStepperMotor.py file must be run u
 python3 sprayStepperMotor.py
 ```
 Once this command is run, the Spray Subsystem will be consistently checking in an infinite loop if the spray is activated or deactivated based on the user’s alarms.
+![alt text](https://github.com/tylergwm2000/L1-G10-Project-Repository/blob/main/images/sprayOutput.png)  
 
 ### Web GUI
 In order to run the Web GUI, the frontend.py file must be run using the following command:
